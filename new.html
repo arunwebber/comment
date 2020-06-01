@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>comments CRUD</title>
+  <style>
+    input[type='submit'], button, [aria-label]{
+      cursor: pointer;
+    }
+    #spoiler{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+
+
+<p id="counter"></p>
+
+<table>
+  <tr>
+    <th>comment</th>
+  </tr>
+    <tbody id="comments">
+    </tbody>
+</table>
+
+<script>
+var app = new function() {
+
+  this.el = document.getElementById('comments');
+  this.el0 = document.getElementById('name');
+
+  this.comments = ['This is a great product','This product will not work as expected'];
+  this.names = ['Arun','Rahul'];
+
+  this.Count = function(data) {
+    var el   = document.getElementById('counter');
+    var comment = 'comment';
+
+    if (data) {
+      if (data > 1) {
+        comment = 'comments';
+      }
+      el.innerHTML = data + name + ' ' + comment ;
+    } else {
+      el.innerHTML = 'No ' + comment;
+    }
+  };
+
+  this.FetchAll = function() {
+    var data = '';
+
+    if (this.comments.length > 0) {
+      for (i = 0; i < this.comments.length; i++) {
+        data += '<tr>';
+        data += '<td>' + this.names[i] +':'+this.comments[i] + '</td>';
+        data += '</tr><tr>';
+        data += '<td>' + 'Replys' + '</td>';
+        data += '</tr><tr>';
+        data += '<td><button onclick="app.Edit(' + i + ')">Edit</button></td>';
+        data += '<td><button onclick="app.Delete(' + i + ')">Delete</button></td>';
+        data += '</tr>';
+      }
+    }
+
+    this.Count(this.comments.length);
+    return this.el.innerHTML = data;
+  };
+
+  this.Add = function () {
+    el = document.getElementById('add-comment');
+    el0 = document.getElementById('name');
+    // Get the value
+    var comment = el.value;
+    var name = el0.value;
+    if (comment) {
+      // Add the new value
+      this.comments.push(comment.trim());
+      this.names.push(name.trim());
+      // Reset input value
+      el.value = '';
+      // Dislay the new list
+      this.FetchAll();
+    }
+  };
+
+  this.Edit = function (item) {
+    var el = document.getElementById('edit-comment');
+    // Display value in the field
+    el.value = this.comments[item];
+    // Display fields
+    document.getElementById('spoiler').style.display = 'block';
+    self = this;
+
+    document.getElementById('saveEdit').onsubmit = function() {
+      // Get value
+      var comment = el.value;
+
+      if (comment) {
+        // Edit value
+        self.comments.splice(item, 1, comment.trim());
+        // Display the new list
+        self.FetchAll();
+        // Hide fields
+        CloseInput();
+      }
+    }
+  };
+
+  this.Delete = function (item) {
+    // Delete the current row
+    this.comments.splice(item, 1);
+    // Display the new list
+    this.FetchAll();
+  };
+
+}
+
+app.FetchAll();
+
+function CloseInput() {
+  document.getElementById('spoiler').style.display = 'none';
+}
+</script>
+
+<form action="javascript:void(0);" method="POST" onsubmit="app.Add()">
+  <input type="text" id="name" placeholder="Name"></br>
+  <input type="text" id="add-comment" placeholder="Add comments"></br>
+  <input type="submit" value="Add">
+</form>
+
+<div id="spoiler" role="aria-hidden">
+  <form action="javascript:void(0);" method="POST" id="saveEdit">
+    <input type="text" id="edit-comment">
+    <input type="submit" value="Edit" /> <a onclick="CloseInput()" aria-label="Close">&#10006;</a>
+  </form>
+</div>
+</body>
+</html>
